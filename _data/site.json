@@ -1,0 +1,17 @@
+{
+  "title": "Maxime Bineau",
+  "tagline": "DevSecOps — construire, casser, attaquer, sécuriser, raconter",
+  "description": "Portfolio et blog DevSecOps de Maxime Bineau : sécurité des plateformes, CI/CD, Kubernetes, supply chain — appris en construisant.",
+  "url": "https://mbineau.github.io",
+  "lang": "fr",
+  "author": "Maxime Bineau",
+  "github": "https://github.com/mbineau",
+  "repo": "https://github.com/mbineau/mbineau.github.io",
+  "nav": [
+    { "label": "Accueil", "url": "/" },
+    { "label": "Projets", "url": "/projets/" },
+    { "label": "Roadmap", "url": "/roadmap/" },
+    { "label": "Blog", "url": "/blog/" },
+    { "label": "Échecs", "url": "/echecs/" }
+  ]
+}

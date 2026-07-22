@@ -1,3 +1,11 @@
+---
+title: "Roadmap — Platform Security par la construction"
+description: "Ma mega-roadmap DevSecOps : construire cassé, comprendre en attaquant, sécuriser, publier. Quatre phases et un capstone, avec Definition of Done."
+layout: layouts/page.njk
+permalink: /roadmap/
+hideTitle: true
+---
+
 # Mega Roadmap — Platform Security par la construction
 
 > **Philosophie : Construire cassé → Comprendre en attaquant → Sécuriser → Publier.**

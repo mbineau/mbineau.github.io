@@ -1,0 +1,29 @@
+---
+layout: layouts/base.njk
+title: "Blog"
+description: "Write-ups DevSecOps : ce que je voulais faire, comment ça a cassé, ce que j'ai compris, comment je l'ai sécurisé."
+permalink: /blog/
+eleventyExcludeFromCollections: true
+---
+<header class="page-header">
+  <p class="kicker">$ ls posts/</p>
+  <h1>Blog</h1>
+  <p class="lead">Des write-ups au format : <em>ce que je voulais faire → comment ça a cassé → ce que j'ai compris → comment je l'ai sécurisé</em>.</p>
+</header>
+{% set posts = collections.posts | newestFirst %}
+{% if posts.length %}
+<ol class="post-list">
+  {% for post in posts %}
+  <li>
+    <time datetime="{{ post.date | dateIso }}">{{ post.date | dateFr }}</time>
+    <div>
+      <a class="post-title" href="{{ post.url }}">{{ post.data.title }}</a>
+      {% if post.data.description %}<p>{{ post.data.description }}</p>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p class="muted">Premier billet en préparation.</p>
+{% endif %}
+<p class="back-link">S'abonner : <a href="/feed.xml">flux Atom</a></p>

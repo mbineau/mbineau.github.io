@@ -1,0 +1,62 @@
+---
+layout: layouts/base.njk
+permalink: /
+eleventyExcludeFromCollections: true
+---
+<section class="hero">
+  <p class="kicker">$ whoami</p>
+  <h1>Maxime Bineau</h1>
+  <p class="lead">DevSecOps. J'apprends la sécurité des plateformes en construisant : je monte l'infra, je la casse, je l'attaque, puis je la durcis — et j'écris ici ce que j'en retiens.</p>
+  <div class="hero-actions">
+    <a class="btn" href="/projets/">Voir les projets</a>
+    <a class="btn btn-ghost" href="{{ site.github }}">GitHub ↗</a>
+  </div>
+</section>
+
+<section class="section" aria-label="Démarche">
+  <div class="steps">
+    <div class="step"><span class="num">01</span><span class="name">Construire cassé</span><p>La version naïve d'abord — celle qui échoue. C'est le signe qu'on apprend la bonne chose.</p></div>
+    <div class="step"><span class="num">02</span><span class="name">Comprendre en attaquant</span><p>Un guardrail que je ne sais pas contourner est un guardrail que je ne comprends pas.</p></div>
+    <div class="step"><span class="num">03</span><span class="name">Sécuriser</span><p>Least privilege, gates bloquantes, tout en code — zéro ClickOps.</p></div>
+    <div class="step"><span class="num">04</span><span class="name">Publier</span><p>Repo propre, write-up honnête, échecs inclus.</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Projets</h2><a class="more" href="/projets/">tout voir →</a></div>
+  <div class="cards">
+    {% for p in projects %}{% if p.featured %}
+    <article class="card">
+      <div class="card-head">
+        <h3><a href="/projets/#{{ p.slug }}" style="color: inherit;">{{ p.name }}</a></h3>
+        <span class="badge {% if p.status == 'privé' %}badge-private{% else %}badge-public{% endif %}">{{ p.status }}</span>
+      </div>
+      <p>{{ p.description }}</p>
+      <div class="chips">{% for t in p.stack %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+    </article>
+    {% endif %}{% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Derniers billets</h2><a class="more" href="/blog/">tous les billets →</a></div>
+  {% set latest = collections.posts | newestFirst | limit(3) %}
+  {% if latest.length %}
+  <ol class="post-list">
+    {% for post in latest %}
+    <li>
+      <time datetime="{{ post.date | dateIso }}">{{ post.date | dateFr }}</time>
+      <div>
+        <a class="post-title" href="{{ post.url }}">{{ post.data.title }}</a>
+        {% if post.data.description %}<p>{{ post.data.description }}</p>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}<p class="muted">Premier billet en préparation.</p>{% endif %}
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Échecs assumés</h2></div>
+  <p class="lead">Règle n°6 de ma <a href="/roadmap/">roadmap</a> : noter ce qui a cassé et pourquoi. C'est le meilleur matériau de blog — et le meilleur souvenir de fierté plus tard. <a href="/echecs/">Lire le journal des échecs →</a></p>
+</section>

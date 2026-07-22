@@ -1,0 +1,9 @@
+---
+layout: layouts/base.njk
+---
+<article class="page">
+  {% if not hideTitle %}<header class="page-header"><h1>{{ title }}</h1>{% if intro %}<p class="lead">{{ intro }}</p>{% endif %}</header>{% endif %}
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+</article>

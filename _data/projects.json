@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Security Gate Dashboard",
+    "slug": "security-gate-dashboard",
+    "status": "privé",
+    "statusNote": "repo privé — démo sur demande",
+    "featured": true,
+    "description": "Une gate de sécurité multi-dépôts pour CI/CD, avec le tableau de bord qui va avec. Un runner Python orchestre Semgrep, Trivy et Gitleaks (versions épinglées via mise), décide bloquant / non-bloquant selon un seuil de sévérité, et pousse chaque run vers une API FastAPI ; le front React affiche dépôts, runs, findings et métriques, en live (SSE).",
+    "highlights": [
+      "La décision de gate est calculée une seule fois, dans le runner — l'API la stocke telle quelle",
+      "Les secrets détectés sont toujours critiques et jamais stockés en clair (valeur caviardée)",
+      "Ingestion SARIF 2.1.0 : n'importe quel scanner peut alimenter le dashboard",
+      "Métriques assumées comme des analogies DORA (taux de blocage ≈ CFR, temps rouge→vert ≈ MTTR) — pas de fausses métriques de prod",
+      "Déployée en conditions réelles sur des dépôts privés (app Flutter, outil d'analyse de droits Snowflake) via GitHub Actions, actions épinglées au SHA"
+    ],
+    "stack": ["Python", "FastAPI", "SQLite", "React", "Vite", "Tailwind", "GitHub Actions", "Semgrep", "Trivy", "Gitleaks"],
+    "images": [
+      {
+        "src": "/assets/img/projects/sgd-repos.png",
+        "alt": "Vue multi-dépôts du Security Gate Dashboard : liste des dépôts avec le statut de leur dernière gate"
+      },
+      {
+        "src": "/assets/img/projects/sgd-run.png",
+        "alt": "Détail d'un run : findings par scanner avec sévérité et décision de gate"
+      },
+      {
+        "src": "/assets/img/projects/sgd-metrics.png",
+        "alt": "Onglet Metrics : taux de blocage, temps rouge→vert et findings dans le temps"
+      }
+    ],
+    "links": []
+  },
+  {
+    "name": "Pipeline Guard",
+    "slug": "pipeline-guard",
+    "status": "privé",
+    "statusNote": "repo privé — démo sur demande",
+    "featured": true,
+    "description": "Une gate de sécurité réutilisable pour GitHub Actions : Trivy (dépendances, misconfigurations, secrets), Semgrep (SAST) et zizmor (audit des workflows CI) derrière un seul job bloquant, exposé en workflow_call avec des entrées typées. Livré avec une app TypeScript volontairement vulnérable — le ❌ rouge de la gate sur son propre repo est la preuve qu'elle attrape vraiment quelque chose.",
+    "highlights": [
+      "Copy once, run anywhere : adopter la gate dans un nouveau repo = un fichier + un job",
+      "La pipeline s'audite elle-même — zizmor détecte les actions non épinglées, la persistance de credentials, l'injection de template",
+      "Parité local / CI : les mêmes versions d'outils partout via mise.toml + mise.lock",
+      "Findings envoyés en SARIF vers l'onglet Security de GitHub",
+      "Mode soft-fail pour onboarder un codebase legacy sans casser les builds"
+    ],
+    "stack": ["GitHub Actions", "Trivy", "Semgrep", "zizmor", "mise", "TypeScript", "Docker"],
+    "images": [],
+    "links": []
+  }
+]
