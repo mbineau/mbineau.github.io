@@ -181,8 +181,9 @@ h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); font-weight: 800; letter-spacing: 
 .page-header { margin-bottom: 2rem; display: grid; gap: 0.75rem; }
 
 /* ---------- Hero (accueil) ---------- */
-.hero { padding-block: 3rem 1rem; display: grid; gap: 1rem; }
-.hero .lead { font-size: 1.2rem; }
+.hero { padding-block: 2.5rem 1rem; display: grid; gap: 1.15rem; }
+.hero h1 { font-size: clamp(1.85rem, 4vw, 2.55rem); letter-spacing: -0.025em; max-width: 27ch; }
+.hero .lead { font-size: 1.1rem; max-width: 66ch; }
 .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
 
 .btn {
@@ -203,18 +204,26 @@ h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); font-weight: 800; letter-spacing: 
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;
 }
-.section-head h2 { font-size: 1.45rem; font-weight: 750; }
-.section-head h2::before { content: "## "; color: var(--accent); font-family: var(--font-mono); font-weight: 600; }
+.section-head h2 { font-size: 1.4rem; font-weight: 750; letter-spacing: -0.01em; }
 .section-head .more { font-size: 0.95rem; white-space: nowrap; }
 
-.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.9rem; }
-.step {
-  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-  padding: 1rem 1.1rem; display: grid; gap: 0.3rem;
+/* Intertitre discret */
+.eyebrow {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--tx-2); margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
 }
-.step .num { font-family: var(--font-mono); color: var(--accent); font-size: 0.85rem; font-weight: 700; }
-.step .name { font-weight: 700; }
-.step p { color: var(--tx-2); font-size: 0.92rem; line-height: 1.5; }
+
+/* Positions / convictions */
+.tenets { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 1.75rem 2.5rem; }
+.tenet { display: grid; gap: 0.5rem; align-content: start; }
+.tenet h2 {
+  font-size: 1.02rem; font-weight: 700; line-height: 1.4;
+  padding-left: 0.85rem; border-left: 2px solid var(--accent);
+}
+.tenet p { color: var(--tx-2); font-size: 0.94rem; padding-left: 0.85rem; }
+.tenet-link { font-size: 0.88rem; }
+.tenet-link a { color: var(--accent); }
 
 /* ---------- Cartes projets ---------- */
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 1.25rem; }
@@ -225,6 +234,8 @@ h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); font-weight: 800; letter-spacing: 
 }
 .card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 .card h2, .card h3 { font-size: 1.25rem; font-weight: 750; }
+.card h3 a { color: var(--tx); }
+.card h3 a:hover { color: var(--accent); text-decoration: none; }
 .card-head { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
 .card p { color: var(--tx-2); font-size: 0.97rem; }
 .card .highlights { margin: 0; padding-left: 1.1rem; color: var(--tx-2); font-size: 0.93rem; display: grid; gap: 0.4rem; }
@@ -260,7 +271,7 @@ h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); font-weight: 800; letter-spacing: 
 /* ---------- Liste de billets ---------- */
 .post-list { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
 .post-list li {
-  display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; align-items: baseline;
+  display: grid; grid-template-columns: 9.5rem 1fr; gap: 1rem; align-items: baseline;
   padding: 0.85rem 1rem; border-radius: 12px; border: 1px solid transparent;
 }
 .post-list li:hover { background: var(--bg-2); border-color: var(--border); }
@@ -334,6 +345,24 @@ code, kbd { font-family: var(--font-mono); }
 .footer-note { font-size: 0.82rem; opacity: 0.85; }
 
 /* ---------- Page projets ---------- */
-.projects { display: grid; gap: 1.75rem; }
-.projects .card h2 { font-size: 1.35rem; }
+.projects { display: grid; gap: 4.5rem; }
+.project { display: grid; gap: 1rem; max-width: 76ch; }
+.project > h2 {
+  font-size: 1.65rem; font-weight: 780; letter-spacing: -0.015em;
+  padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+}
+.project-pitch { font-size: 1.06rem; color: var(--tx); }
+.project p { color: var(--tx-2); }
+.project-label {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--tx-2); margin-top: 1rem;
+}
+.decisions { display: grid; gap: 1.25rem; }
+.decision { display: grid; gap: 0.35rem; padding-left: 0.9rem; border-left: 2px solid var(--border); }
+.decision h4 { font-size: 0.99rem; font-weight: 700; line-height: 1.4; }
+.decision p { font-size: 0.94rem; }
+.project-foot { display: grid; gap: 0.8rem; margin-top: 0.75rem; }
+.project-writeups { font-size: 0.9rem; }
+.card-pitch { font-size: 0.97rem; }
+.note { color: var(--tx-2); font-size: 0.92rem; margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
 [id] { scroll-margin-top: 5.5rem; }

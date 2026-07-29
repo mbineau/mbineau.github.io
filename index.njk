@@ -4,21 +4,36 @@ permalink: /
 eleventyExcludeFromCollections: true
 ---
 <section class="hero">
-  <p class="kicker">$ whoami</p>
-  <h1>Maxime Bineau</h1>
-  <p class="lead">DevSecOps. J'apprends la sécurité des plateformes en construisant : je monte l'infra, je la casse, je l'attaque, puis je la durcis — et j'écris ici ce que j'en retiens.</p>
+  <h1>Je construis les garde-fous que les équipes n'ont pas besoin de contourner.</h1>
+  <p class="lead">Ingénieur sécurité. Je travaille sur les gates CI/CD bloquantes, la sécurité de la chaîne d'approvisionnement logicielle et le durcissement de plateformes — avec une conviction : un contrôle de sécurité qui coûte trop cher à respecter finit désactivé, et un contrôle désactivé ne protège rien.</p>
   <div class="hero-actions">
-    <a class="btn" href="/projets/">Voir les projets</a>
-    <a class="btn btn-ghost" href="{{ site.github }}">GitHub ↗</a>
+    <a class="btn" href="/projets/">Ce que je construis</a>
+    <a class="btn btn-ghost" href="/blog/">Ce que j'en écris</a>
   </div>
 </section>
 
-<section class="section" aria-label="Démarche">
-  <div class="steps">
-    <div class="step"><span class="num">01</span><span class="name">Construire cassé</span><p>La version naïve d'abord — celle qui échoue. C'est le signe qu'on apprend la bonne chose.</p></div>
-    <div class="step"><span class="num">02</span><span class="name">Comprendre en attaquant</span><p>Un guardrail que je ne sais pas contourner est un guardrail que je ne comprends pas.</p></div>
-    <div class="step"><span class="num">03</span><span class="name">Sécuriser</span><p>Least privilege, gates bloquantes, tout en code — zéro ClickOps.</p></div>
-    <div class="step"><span class="num">04</span><span class="name">Publier</span><p>Repo propre, write-up honnête, échecs inclus.</p></div>
+<section class="section">
+  <p class="eyebrow">Positions</p>
+  <div class="tenets">
+    <article class="tenet">
+      <h2>La décision se prend à un seul endroit</h2>
+      <p>Dans ma gate multi-dépôts, le verdict bloquant/passant est calculé une fois, dans le runner, au moment du scan. L'API le stocke tel quel, le dashboard ne fait que l'afficher. Une politique de sécurité répartie sur trois composants est une politique que personne ne peut auditer.</p>
+    </article>
+    <article class="tenet">
+      <h2>Un faux positif coûte plus cher qu'un vrai</h2>
+      <p>Un scanner qui crie au loup se fait contourner, et le jour où il a raison, plus personne n'écoute. Régler un scanner n'est pas l'affaiblir : c'est la condition pour qu'il reste allumé.</p>
+      <p class="tenet-link"><a href="/blog/le-faux-positif-coute-plus-cher-que-le-vrai/">Le cas concret →</a></p>
+    </article>
+    <article class="tenet">
+      <h2>Une gate fait partie de la chaîne qu'elle audite</h2>
+      <p>Elle s'exécute avant le code applicatif, avec au moins autant de privilèges. Quand j'ai déployé la mienne sur deux dépôts réels, ses premiers findings ont porté sur son propre workflow. C'est le bon résultat.</p>
+      <p class="tenet-link"><a href="/blog/ma-gate-a-bloque-son-propre-build/">Le retour d'expérience →</a></p>
+    </article>
+    <article class="tenet">
+      <h2>Pas de métrique indéfendable</h2>
+      <p>Mon dashboard affiche des analogues DORA, pas du DORA — et il l'écrit dans l'interface. Une métrique dont on ne peut pas défendre la définition en réunion n'est pas une métrique, c'est un argument de vente.</p>
+      <p class="tenet-link"><a href="/blog/mes-metriques-ne-sont-pas-dora/">Pourquoi →</a></p>
+    </article>
   </div>
 </section>
 
@@ -28,20 +43,18 @@ eleventyExcludeFromCollections: true
     {% for p in projects %}{% if p.featured %}
     <article class="card">
       <div class="card-head">
-        <h3><a href="/projets/#{{ p.slug }}" style="color: inherit;">{{ p.name }}</a></h3>
-        <span class="badge {% if p.status == 'privé' %}badge-private{% else %}badge-public{% endif %}">{{ p.status }}</span>
+        <h3><a href="/projets/#{{ p.slug }}">{{ p.name }}</a></h3>
       </div>
-      <p>{{ p.description }}</p>
-      <div class="chips">{% for t in p.stack %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+      <p class="card-pitch">{{ p.pitch }}</p>
+      <div class="chips">{% for t in p.stack | limit(6) %}<span class="chip">{{ t }}</span>{% endfor %}</div>
     </article>
     {% endif %}{% endfor %}
   </div>
 </section>
 
 <section class="section">
-  <div class="section-head"><h2>Derniers billets</h2><a class="more" href="/blog/">tous les billets →</a></div>
-  {% set latest = collections.posts | newestFirst | limit(3) %}
-  {% if latest.length %}
+  <div class="section-head"><h2>Écrits</h2><a class="more" href="/blog/">tous les billets →</a></div>
+  {% set latest = collections.posts | newestFirst | limit(4) %}
   <ol class="post-list">
     {% for post in latest %}
     <li>
@@ -53,10 +66,4 @@ eleventyExcludeFromCollections: true
     </li>
     {% endfor %}
   </ol>
-  {% else %}<p class="muted">Premier billet en préparation.</p>{% endif %}
-</section>
-
-<section class="section">
-  <div class="section-head"><h2>Échecs assumés</h2></div>
-  <p class="lead">Règle n°6 de ma <a href="/roadmap/">roadmap</a> : noter ce qui a cassé et pourquoi. C'est le meilleur matériau de blog — et le meilleur souvenir de fierté plus tard. <a href="/echecs/">Lire le journal des échecs →</a></p>
 </section>

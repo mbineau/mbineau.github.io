@@ -1,24 +1,24 @@
 ---
 layout: layouts/base.njk
 title: "Projets"
-description: "Projets DevSecOps de Maxime Bineau : gates de sécurité CI/CD, dashboard multi-dépôts, supply chain."
+description: "Gates de sécurité CI/CD bloquantes, dashboard multi-dépôts, sécurité de la chaîne d'approvisionnement — décisions d'architecture et résultats."
 permalink: /projets/
 eleventyExcludeFromCollections: true
 ---
 <header class="page-header">
-  <p class="kicker">$ ls ~/DevSecOps/</p>
   <h1>Projets</h1>
-  <p class="lead">« Le portfolio n'est pas une phase finale, c'est un sous-produit de chaque étape. » Les repos sont privés par défaut — code et démo sur demande, <a href="https://github.com/mbineau">via GitHub</a>.</p>
+  <p class="lead">Deux systèmes de sécurité CI/CD, déployés sur des dépôts réels. Pour chacun : le problème, les décisions d'architecture qui comptent, et ce que ça donne en production.</p>
 </header>
 
 <div class="projects">
   {% for p in projects %}
-  <article class="card project" id="{{ p.slug }}">
-    <div class="card-head">
-      <h2>{{ p.name }}</h2>
-      <span class="badge {% if p.status == 'privé' %}badge-private{% else %}badge-public{% endif %}">{{ p.status }}</span>
-    </div>
-    <p>{{ p.description }}</p>
+  <article class="project" id="{{ p.slug }}">
+    <h2>{{ p.name }}</h2>
+    <p class="project-pitch">{{ p.pitch }}</p>
+
+    <h3 class="project-label">Le problème</h3>
+    <p>{{ p.problem }}</p>
+
     {% if p.images.length %}
     <div class="shots{% if p.images.length > 1 %} multi{% endif %}">
       {% for img in p.images %}
@@ -29,14 +29,30 @@ eleventyExcludeFromCollections: true
       {% endfor %}
     </div>
     {% endif %}
-    <ul class="highlights">
-      {% for h in p.highlights %}<li>{{ h }}</li>{% endfor %}
-    </ul>
-    <div class="chips">{% for t in p.stack %}<span class="chip">{{ t }}</span>{% endfor %}</div>
-    {% if p.links.length %}
-    <p>{% for l in p.links %}<a href="{{ l.url }}">{{ l.label }} ↗</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
-    {% endif %}
-    {% if p.statusNote %}<p class="muted" style="font-size: 0.85rem;">{{ p.statusNote }}</p>{% endif %}
+
+    <h3 class="project-label">Décisions d'architecture</h3>
+    <div class="decisions">
+      {% for d in p.decisions %}
+      <div class="decision">
+        <h4>{{ d.title }}</h4>
+        <p>{{ d.body }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h3 class="project-label">Résultat</h3>
+    <p>{{ p.outcome }}</p>
+
+    <div class="project-foot">
+      <div class="chips">{% for t in p.stack %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+      {% if p.writeups.length %}
+      <p class="project-writeups">Écrits liés :
+        {% for w in p.writeups %}<a href="{{ w.url }}">{{ w.label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+      </p>
+      {% endif %}
+    </div>
   </article>
   {% endfor %}
 </div>
+
+<p class="note">Le code de ces projets est dans des dépôts privés. Je le présente volontiers en entretien ou en visio — <a href="{{ site.github }}">via GitHub</a>.</p>

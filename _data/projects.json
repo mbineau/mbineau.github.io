@@ -2,50 +2,78 @@
   {
     "name": "Security Gate Dashboard",
     "slug": "security-gate-dashboard",
-    "status": "privé",
-    "statusNote": "repo privé — démo sur demande",
     "featured": true,
-    "description": "Une gate de sécurité multi-dépôts pour CI/CD, avec le tableau de bord qui va avec. Un runner Python orchestre Semgrep, Trivy et Gitleaks (versions épinglées via mise), décide bloquant / non-bloquant selon un seuil de sévérité, et pousse chaque run vers une API FastAPI ; le front React affiche dépôts, runs, findings et métriques, en live (SSE).",
-    "highlights": [
-      "La décision de gate est calculée une seule fois, dans le runner — l'API la stocke telle quelle",
-      "Les secrets détectés sont toujours critiques et jamais stockés en clair (valeur caviardée)",
-      "Ingestion SARIF 2.1.0 : n'importe quel scanner peut alimenter le dashboard",
-      "Métriques assumées comme des analogies DORA (taux de blocage ≈ CFR, temps rouge→vert ≈ MTTR) — pas de fausses métriques de prod",
-      "Déployée en conditions réelles sur des dépôts privés (app Flutter, outil d'analyse de droits Snowflake) via GitHub Actions, actions épinglées au SHA"
+    "pitch": "Une gate de sécurité bloquante déployée sur plusieurs dépôts, et le tableau de bord qui rend ses décisions auditables.",
+    "problem": "Un scan de sécurité qui tourne « de temps en temps, sur le poste de quelqu'un » ne protège rien. Mais une gate bloquante déployée sur plusieurs dépôts pose immédiatement trois questions : qui décide qu'un build est rouge, comment on l'audite, et comment on évite qu'une panne d'infrastructure de sécurité arrête toute la livraison.",
+    "decisions": [
+      {
+        "title": "La décision de gate est calculée une seule fois",
+        "body": "Le runner évalue la politique au moment du scan et transmet son verdict ; l'API le stocke verbatim, le dashboard l'affiche sans jamais le recalculer. Un seul endroit à auditer, un seul endroit à changer — et aucune divergence possible entre ce que la CI a appliqué et ce que l'interface montre."
+      },
+      {
+        "title": "Une panne du dashboard ne bloque jamais une livraison",
+        "body": "Le runner dispose d'un mode où un backend injoignable produit un avertissement, pas un échec : la gate décide quand même, localement. Un outil de sécurité qui devient un point de défaillance unique de la chaîne de livraison est un outil qu'on finit par retirer."
+      },
+      {
+        "title": "Les secrets sont critiques par construction, et jamais stockés",
+        "body": "Toute détection de secret est forcée en sévérité critique, et la valeur détectée est caviardée avant persistance : la base du dashboard ne contient jamais le secret lui-même. Un outil de sécurité qui centralise les secrets qu'il découvre déplace le problème au lieu de le résoudre."
+      },
+      {
+        "title": "SARIF comme point d'entrée universel",
+        "body": "En plus de l'orchestration native de Semgrep, Trivy et Gitleaks, le runner normalise n'importe quel SARIF 2.1.0. Le scanner est une étiquette libre, mais la catégorie est un ensemble fermé (SAST, dépendances, IaC, secrets, CI) — n'importe quel outil peut alimenter le dashboard sans que le schéma se dilue."
+      }
     ],
-    "stack": ["Python", "FastAPI", "SQLite", "React", "Vite", "Tailwind", "GitHub Actions", "Semgrep", "Trivy", "Gitleaks"],
+    "outcome": "Déployée sur des dépôts privés réels via GitHub Actions, avec des versions de scanners épinglées et des actions référencées par SHA. Sur les deux premiers dépôts onboardés, la gate est passée de rouge à verte le jour même — après correction de findings qui portaient d'abord sur son propre workflow. Le dashboard suit aujourd'hui 8 dépôts et une trentaine de runs, en temps réel (SSE).",
+    "stack": ["Python", "FastAPI", "SQLite", "React", "Vite", "Tailwind", "GitHub Actions", "Semgrep", "Trivy", "Gitleaks", "SARIF", "mise"],
     "images": [
       {
         "src": "/assets/img/projects/sgd-repos.png",
-        "alt": "Vue multi-dépôts du Security Gate Dashboard : liste des dépôts avec le statut de leur dernière gate"
+        "alt": "Vue multi-dépôts : statut de la dernière gate pour chaque dépôt, avec la répartition des findings par sévérité"
       },
       {
         "src": "/assets/img/projects/sgd-run.png",
-        "alt": "Détail d'un run : findings par scanner avec sévérité et décision de gate"
+        "alt": "Détail d'un run : progression par scanner et findings classés par sévérité, avec la décision de gate"
       },
       {
         "src": "/assets/img/projects/sgd-metrics.png",
-        "alt": "Onglet Metrics : taux de blocage, temps rouge→vert et findings dans le temps"
+        "alt": "Onglet métriques : taux de blocage et temps de retour au vert, explicitement présentés comme des analogues DORA"
       }
     ],
-    "links": []
+    "writeups": [
+      { "label": "Ma gate a bloqué son premier build : le sien", "url": "/blog/ma-gate-a-bloque-son-propre-build/" },
+      { "label": "Le faux positif coûte plus cher que le vrai", "url": "/blog/le-faux-positif-coute-plus-cher-que-le-vrai/" },
+      { "label": "Mes métriques ne sont pas DORA", "url": "/blog/mes-metriques-ne-sont-pas-dora/" }
+    ]
   },
   {
     "name": "Pipeline Guard",
     "slug": "pipeline-guard",
-    "status": "privé",
-    "statusNote": "repo privé — démo sur demande",
     "featured": true,
-    "description": "Une gate de sécurité réutilisable pour GitHub Actions : Trivy (dépendances, misconfigurations, secrets), Semgrep (SAST) et zizmor (audit des workflows CI) derrière un seul job bloquant, exposé en workflow_call avec des entrées typées. Livré avec une app TypeScript volontairement vulnérable — le ❌ rouge de la gate sur son propre repo est la preuve qu'elle attrape vraiment quelque chose.",
-    "highlights": [
-      "Copy once, run anywhere : adopter la gate dans un nouveau repo = un fichier + un job",
-      "La pipeline s'audite elle-même — zizmor détecte les actions non épinglées, la persistance de credentials, l'injection de template",
-      "Parité local / CI : les mêmes versions d'outils partout via mise.toml + mise.lock",
-      "Findings envoyés en SARIF vers l'onglet Security de GitHub",
-      "Mode soft-fail pour onboarder un codebase legacy sans casser les builds"
+    "pitch": "Une gate de sécurité réutilisable pour GitHub Actions, exposée en workflow réutilisable à entrées typées — dont l'audit porte aussi sur les workflows eux-mêmes.",
+    "problem": "La plupart des politiques de sécurité CI sont copiées-collées de dépôt en dépôt, dérivent en quelques mois, et finissent par ne plus décrire ce qui tourne vraiment. L'objectif ici était l'inverse : une gate qu'on adopte en un fichier et qu'on met à jour de façon centralisée.",
+    "decisions": [
+      {
+        "title": "Un workflow réutilisable, pas un modèle à copier",
+        "body": "Toute la logique est exposée via workflow_call avec des entrées typées et documentées : chemin scanné, seuil de sévérité, activation par scanner, mode rapport seul. Hébergée dans un dépôt central et référencée par tag, la gate se met à jour pour toute l'organisation en déplaçant ce tag — changer de politique ne demande pas de rejouer une migration sur chaque dépôt."
+      },
+      {
+        "title": "Le pipeline s'audite lui-même",
+        "body": "zizmor applique une analyse statique aux workflows GitHub Actions du dépôt et remonte les risques d'approvisionnement : actions non épinglées, persistance de credentials, injection de template, déclencheurs dangereux. Les scanners applicatifs ne regardent jamais la tuyauterie qui les exécute — c'est pourtant le composant le plus privilégié de la chaîne."
+      },
+      {
+        "title": "Parité locale et CI par des versions épinglées",
+        "body": "Les versions d'outils vivent dans un seul fichier mise, avec un verrou à sommes de contrôle par plateforme. Le scan local et le scan CI consomment les mêmes pins, donc les résultats ne peuvent pas diverger — la phrase « ça passe sur ma machine » n'a pas de sens sur une gate de sécurité."
+      },
+      {
+        "title": "Un mode rapport seul pour l'adoption progressive",
+        "body": "Sur un codebase existant, la gate s'active d'abord sans bloquer : visibilité complète, backlog mesurable, aucune interruption. On la bascule en bloquant une fois le backlog résorbé. Une gate qu'on impose d'un coup sur du legacy est une gate qu'on désactive la semaine suivante."
+      }
     ],
-    "stack": ["GitHub Actions", "Trivy", "Semgrep", "zizmor", "mise", "TypeScript", "Docker"],
+    "outcome": "Le dépôt embarque une application TypeScript volontairement vulnérable comme cible de scan : l'échec rouge de la gate sur son propre dépôt est la preuve exécutable qu'elle attrape réellement quelque chose. Les findings remontent dans l'onglet Security de GitHub au format SARIF.",
+    "stack": ["GitHub Actions", "Trivy", "Semgrep", "zizmor", "SARIF", "mise", "TypeScript", "Docker"],
     "images": [],
-    "links": []
+    "writeups": [
+      { "label": "Un tag n'est pas une version", "url": "/blog/un-tag-nest-pas-une-version/" }
+    ]
   }
 ]

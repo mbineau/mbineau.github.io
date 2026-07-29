@@ -1,17 +1,15 @@
 ---
 layout: layouts/base.njk
-title: "Blog"
-description: "Write-ups DevSecOps : ce que je voulais faire, comment ça a cassé, ce que j'ai compris, comment je l'ai sécurisé."
+title: "Écrits"
+description: "Décisions techniques de sécurité CI/CD et de chaîne d'approvisionnement logicielle : ce que j'ai choisi, pourquoi, et ce que ça a coûté."
 permalink: /blog/
 eleventyExcludeFromCollections: true
 ---
 <header class="page-header">
-  <p class="kicker">$ ls posts/</p>
-  <h1>Blog</h1>
-  <p class="lead">Des write-ups au format : <em>ce que je voulais faire → comment ça a cassé → ce que j'ai compris → comment je l'ai sécurisé</em>.</p>
+  <h1>Écrits</h1>
+  <p class="lead">Des décisions techniques et ce qu'elles ont coûté. Pas des tutoriels — il en existe déjà de meilleurs que les miens.</p>
 </header>
 {% set posts = collections.posts | newestFirst %}
-{% if posts.length %}
 <ol class="post-list">
   {% for post in posts %}
   <li>
@@ -23,7 +21,4 @@ eleventyExcludeFromCollections: true
   </li>
   {% endfor %}
 </ol>
-{% else %}
-<p class="muted">Premier billet en préparation.</p>
-{% endif %}
-<p class="back-link">S'abonner : <a href="/feed.xml">flux Atom</a></p>
+<p class="note">Flux <a href="/feed.xml">Atom</a>.</p>
