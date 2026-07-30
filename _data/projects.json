@@ -1,5 +1,36 @@
 [
   {
+    "name": "Snowflake Rights Explorer",
+    "slug": "snowflake-rights-explorer",
+    "featured": true,
+    "pitch": "Croiser l'infrastructure-as-code Snowflake et l'annuaire d'entreprise pour répondre à une question qu'aucun des deux ne traite seul : quelles personnes détiennent réellement des droits élevés en production.",
+    "problem": "Sur un entrepôt Snowflake géré en IaC, les privilèges vivent dans des définitions de rôles en YAML et les identités dans les groupes de l'annuaire. Aucun des deux systèmes ne répond à « qui peut écrire en production » : le dépôt ne connaît pas les personnes, l'annuaire ne connaît pas les privilèges. La lecture manuelle n'y arrive pas non plus, parce que les rôles héritent les uns des autres sur plusieurs niveaux et que les grants « future » portent sur des objets qui n'existent pas encore. La réponse est dans la jointure, et personne ne la calcule.",
+    "decisions": [
+      {
+        "title": "Hors ligne par construction — aucun accès à la production",
+        "body": "Le générateur ne se connecte jamais à Snowflake. Il lit l'intention déclarée dans les YAML de rôles, étend la sémantique wildcard du dépôt en lignes « all » et « future », et conserve comme motifs les caractères génériques qui exigeraient une connexion vivante. C'est un choix de sécurité avant d'être un choix technique : un outil d'audit d'accès qui réclame des identifiants de production devient lui-même un chemin privilégié — une surface d'attaque de plus, justifiée par la volonté d'en mesurer une autre."
+      },
+      {
+        "title": "L'héritage de rôles est résolu, pas seulement affiché",
+        "body": "La clôture transitive est calculée : un rôle qui obtient un privilège trois niveaux plus haut dans la hiérarchie remonte comme détenteur de ce privilège. C'est précisément ce que la revue manuelle rate, et c'est aussi la façon dont les droits élevés s'accumulent sans que personne n'ait pris de décision explicite."
+      },
+      {
+        "title": "La jointure identité est optionnelle et locale",
+        "body": "Sans export de l'annuaire, l'outil répond « quel rôle détient quoi ». Avec — un export CSV, ou une récupération directe via l'API Graph — il répond « quelle personne détient quoi ». Rendre la couche identité facultative permet de faire tourner l'analyse sans droits de lecture sur l'annuaire, qui sont rarement accordés pour un prototype."
+      },
+      {
+        "title": "Un jeu de test déterministe fige la sémantique",
+        "body": "Une petite fixture couvre l'héritage de rôles, les utilisateurs déclarés en YAML, l'expansion des wildcards, l'appartenance aux groupes, la propriété d'objets et les accès par environnement ; pytest vérifie le tout à chaque modification. Toute la valeur de l'outil tient à l'exactitude de la jointure : un parseur qui perd silencieusement une arête d'héritage sous-estime les privilèges, et un rapport d'audit trop optimiste est le pire résultat possible — il clôt la question."
+      }
+    ],
+    "outcome": "L'analyse produit un jeu de données que consomme un explorateur web local : navigation par rôle, par privilège, par environnement et par personne. Tout est reproductible hors ligne à partir du dépôt d'infrastructure, sans le moindre identifiant Snowflake.\n\nPas de capture d'écran ici : le jeu de données porte des rôles, des groupes et des identités réels. Le motif se raconte, les données non.",
+    "stack": ["Python", "PyYAML", "pytest", "Next.js", "TypeScript", "Microsoft Graph", "Snowflake", "IaC"],
+    "images": [],
+    "writeups": [
+      { "label": "Construire l'outil ne coûte plus rien. Le croire, si.", "url": "/blog/construire-loutil-ne-coute-plus-rien/" }
+    ]
+  },
+  {
     "name": "Security Gate Dashboard",
     "slug": "security-gate-dashboard",
     "featured": true,
@@ -74,6 +105,42 @@
     "images": [],
     "writeups": [
       { "label": "Un tag n'est pas une version", "url": "/blog/un-tag-nest-pas-une-version/" }
+    ]
+  },
+  {
+    "name": "SnowPro Core Trainer",
+    "slug": "snowpro-core-trainer",
+    "featured": true,
+    "pitch": "Un système d'évaluation hors ligne construit à partir de la documentation officielle — et la traçabilité qui rend du contenu généré vérifiable question par question.",
+    "problem": "Générer 600 questions d'entraînement est devenu trivial ; produire 600 questions dont on peut défendre chacune ne l'est pas. Une question générée peut être plausible, bien formulée et fausse — et une justification fausse est pire qu'une absence de support, parce qu'on mémorise l'erreur avec la même conviction. Le problème d'ingénierie n'est pas la génération : c'est la traçabilité et le calibrage.",
+    "decisions": [
+      {
+        "title": "Chaque question porte sa provenance",
+        "body": "Toute question est étiquetée selon son origine — banque de révision existante ou documentation officielle — et les leçons listent les pages exactes dont elles sont tirées, sur un instantané daté de 152 pages. Du contenu généré qu'on ne peut pas retracer est du contenu qu'on ne peut pas corriger : quand un fait devient faux, il faut pouvoir retrouver toutes les questions qui en dépendent."
+      },
+      {
+        "title": "L'échantillonnage suit le blueprint officiel, pas la banque",
+        "body": "Les examens blancs tirent selon les pondérations officielles des cinq domaines, indépendamment du nombre de questions disponibles dans chacun. Sans cette séparation, le score mesure la composition de la banque plutôt que le niveau réel — exactement le travers que je refuse ailleurs sur les métriques de sécurité."
+      },
+      {
+        "title": "Aucun matériel d'examen divulgué",
+        "body": "Les questions réelles de l'examen sont du contenu protégé et leur usage rompt l'accord de certification : rien de tel n'entre dans la banque. La contrainte de sourcing est un choix explicite, documenté dans le dépôt — elle rend le résultat plus difficile à produire et défendable."
+      },
+      {
+        "title": "Un seul fichier, hors ligne, sans dépendance à l'exécution",
+        "body": "Tout tient dans un unique fichier HTML autonome : aucun serveur, aucun appel réseau à l'usage, progression conservée localement. Les lettres de réponse sont volontairement équilibrées entre les options pour qu'on ne puisse pas reconnaître un motif au lieu d'apprendre."
+      }
+    ],
+    "outcome": "625 questions avec justifications sur les cinq domaines du blueprint, 19 leçons — une par concept — et un mode d'entraînement adaptatif qui priorise ce qui n'a jamais été vu et ce qui a été raté au dernier passage. La passe de vérification a aussi produit une correction utile : un guide tiers largement diffusé décrit encore la pondération de l'ancien blueprint, ce que la banque signale explicitement plutôt que de le propager.",
+    "stack": ["JavaScript", "HTML autonome", "localStorage", "Markdown", "Pipeline documentaire"],
+    "images": [
+      {
+        "src": "/assets/img/projects/snowpro-trainer.png",
+        "alt": "Tableau de bord du trainer : modes d'entraînement, préparation par domaine avec une cible de 75 %, et couverture par concept"
+      }
+    ],
+    "writeups": [
+      { "label": "Construire l'outil ne coûte plus rien. Le croire, si.", "url": "/blog/construire-loutil-ne-coute-plus-rien/" }
     ]
   }
 ]
