@@ -34,7 +34,7 @@
     "name": "Security Gate Dashboard",
     "slug": "security-gate-dashboard",
     "featured": true,
-    "pitch": "Une gate de sécurité bloquante déployée sur plusieurs dépôts, et le tableau de bord qui rend ses décisions auditables.",
+    "pitch": "Une gate de sécurité bloquante déployée sur plusieurs dépôts, et le tableau de bord qui rend ses décisions auditables — désormais à côté de ce que GitHub rapporte lui-même sur les workflows et les pull requests.",
     "problem": "Un scan de sécurité qui tourne « de temps en temps, sur le poste de quelqu'un » ne protège rien. Mais une gate bloquante déployée sur plusieurs dépôts pose immédiatement trois questions : qui décide qu'un build est rouge, comment on l'audite, et comment on évite qu'une panne d'infrastructure de sécurité arrête toute la livraison.",
     "decisions": [
       {
@@ -52,9 +52,13 @@
       {
         "title": "SARIF comme point d'entrée universel",
         "body": "En plus de l'orchestration native de Semgrep, Trivy et Gitleaks, le runner normalise n'importe quel SARIF 2.1.0. Le scanner est une étiquette libre, mais la catégorie est un ensemble fermé (SAST, dépendances, IaC, secrets, CI) — n'importe quel outil peut alimenter le dashboard sans que le schéma se dilue."
+      },
+      {
+        "title": "La vue GitHub proxifie un accès privé — donc elle est gardée en conséquence",
+        "body": "Les onglets Pull Requests et Actions lisent l'état réel des dépôts via le CLI `gh`, de sorte qu'aucun token GitHub n'entre jamais dans le processus : rien à faire fuiter dans un log ou une trace. Et parce que ce backend est exposé par un tunnel pour l'ingestion CI, le contrôle « local uniquement » porte sur l'en-tête Host et non sur l'adresse du client — une requête tunnelée arrive elle aussi de 127.0.0.1. Le même contrôle neutralise le DNS rebinding."
       }
     ],
-    "outcome": "Déployée sur des dépôts privés réels via GitHub Actions, avec des versions de scanners épinglées et des actions référencées par SHA. Sur les deux premiers dépôts onboardés, la gate est passée de rouge à verte le jour même — après correction de findings qui portaient d'abord sur son propre workflow. Le dashboard suit aujourd'hui 8 dépôts et une trentaine de runs, en temps réel (SSE).",
+    "outcome": "Déployée sur des dépôts privés réels via GitHub Actions, avec des versions de scanners épinglées et des actions référencées par SHA. Sur les deux premiers dépôts onboardés, la gate est passée de rouge à verte le jour même — après correction de findings qui portaient d'abord sur son propre workflow. Le dashboard suit aujourd'hui 8 dépôts et une trentaine de runs, en temps réel (SSE), répartis sur quatre vues : dépôts, pull requests, Actions et métriques.",
     "stack": ["Python", "FastAPI", "SQLite", "React", "Vite", "Tailwind", "GitHub Actions", "Semgrep", "Trivy", "Gitleaks", "SARIF", "mise"],
     "images": [
       {
@@ -68,9 +72,18 @@
       {
         "src": "/assets/img/projects/sgd-metrics.png",
         "alt": "Onglet métriques : taux de blocage et temps de retour au vert, explicitement présentés comme des analogues DORA"
+      },
+      {
+        "src": "/assets/img/projects/sgd-actions.png",
+        "alt": "Onglet Actions : santé par workflow avec sparkline et taux de réussite, runs récents filtrables, lus en direct depuis GitHub"
+      },
+      {
+        "src": "/assets/img/projects/sgd-pulls.png",
+        "alt": "Onglet Pull Requests : tuiles cliquables qui filtrent la liste — prêtes à merger, CI rouge, review attendue, conflits, obsolètes"
       }
     ],
     "writeups": [
+      { "label": "127.0.0.1 ne veut pas dire « local »", "url": "/blog/127-0-0-1-ne-veut-pas-dire-local/" },
       { "label": "Ma gate a bloqué son premier build : le sien", "url": "/blog/ma-gate-a-bloque-son-propre-build/" },
       { "label": "Le faux positif coûte plus cher que le vrai", "url": "/blog/le-faux-positif-coute-plus-cher-que-le-vrai/" },
       { "label": "Mes métriques ne sont pas DORA", "url": "/blog/mes-metriques-ne-sont-pas-dora/" }
